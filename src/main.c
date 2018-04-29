@@ -208,6 +208,8 @@ void start_server(int argc, char *argv[])
 
 //      client_authenticate(argv[1]);
 
+  g_timeout_add( 100, client_update_monitor, NULL );
+
   log_debug("Entering main loop...\n");
   gtk_main();
 

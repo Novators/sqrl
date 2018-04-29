@@ -190,6 +190,18 @@ mainwindow_create_menus(GtkWidget *in_menubar,
 
 }
 
+GtkTextBuffer *monitorBuffer = NULL;
+
+void UpdateMonitor( char *text ) {
+	if( monitorBuffer ) {
+		gtk_text_buffer_set_text( monitorBuffer, text, strlen( text ));
+		GtkTextIter start, end;
+		gtk_text_buffer_get_bounds( monitorBuffer, &start, &end );
+		gtk_text_buffer_apply_tag_by_name( monitorBuffer, "monospace", &start, &end );
+	}
+}
+
+
 GtkWidget * mainwindow_new(void)
 {
   GtkWidget *main_window;
@@ -212,6 +224,8 @@ GtkWidget * mainwindow_new(void)
   gtk_window_set_default_size(GTK_WINDOW (main_window),
                               settings_get_main_window_width(),
                               settings_get_main_window_height() );
+
+  gtk_window_set_position( GTK_WINDOW (main_window), GTK_WIN_POS_CENTER_ALWAYS );
 
   gtk_window_set_title(GTK_WINDOW (main_window),
                        settings_get_main_window_title());
@@ -245,6 +259,16 @@ GtkWidget * mainwindow_new(void)
                      0);       // padding between widgets.
 
 //  gtk_box_pack_start(GTK_BOX(main_vbox), hpaned_window, TRUE, TRUE, 0);
+
+  GtkTextView *monitor;
+  monitorBuffer = gtk_text_buffer_new( NULL );
+  gtk_text_buffer_create_tag( monitorBuffer, "monospace", "family", "monospace", NULL );
+
+  monitor = gtk_text_view_new();
+  gtk_text_view_set_buffer( monitor, monitorBuffer );
+  gtk_text_view_set_editable( monitor, FALSE );
+  gtk_text_view_set_cursor_visible( monitor, FALSE );
+  gtk_box_pack_start( GTK_BOX(main_vbox), (GtkWidget*)monitor, TRUE, TRUE, 0 );
 
   gtk_box_pack_end(GTK_BOX(main_vbox), status_bar, FALSE, FALSE, 0);
 

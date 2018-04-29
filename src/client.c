@@ -22,6 +22,7 @@
 #include "log.h"
 #include "settings.h"
 #include "progresswindow.h"
+#include "mainwindow.h"
 
 #include "uriparse.h"
 
@@ -45,6 +46,20 @@ SSL_CTX *ctx;
 
 void error(const char *msg) { perror(msg); exit(0); }
 
+static UT_string *smm = NULL;
+
+bool client_update_monitor() {
+	if( smm == NULL ) {
+		utstring_new( smm );
+	}
+	if( single_user ) {
+		sqrl_user_secure_memory_monitor( smm, single_user );
+		UpdateMonitor( utstring_body( smm ));
+	} else {
+		UpdateMonitor( "No User Loaded." );
+	}
+	return TRUE;
+}
 
 int client_authenticate(char *in_url)
 {
@@ -204,6 +219,7 @@ int client_onProgress( Sqrl_Transaction transaction, int p )
     if (p == 100)
     {
       EndProgress();
+      showingProgress = false;
     }
   }
 

@@ -23,6 +23,6 @@ void client_onSend(
     const char *url, size_t url_len,
     const char *payload, size_t payload_len );
 
-
+bool client_update_monitor();
 
 #endif
